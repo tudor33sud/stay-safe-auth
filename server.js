@@ -17,12 +17,15 @@ app.use(reqUtils.middleware.cors());
 //append request id for tracing
 app.use(tracing(appConfig.tracingHeaderKey));
 
+app.use(reqUtils.middleware.injectReferrer());
+
 app.use(reqUtils.middleware.customHeaders());
 
-const dummyRoutes = require('./controller/dummy');
+const groupsRoutes = require('./controller/groups');
+const usersRoutes = require('./controller/users');
 
-app.use(`/dummy`, dummyRoutes);
-
+app.use(`/groups`, groupsRoutes);
+app.use(`/users`,usersRoutes);
 
 //error handling middleware
 app.use(reqUtils.middleware.defaultErrorHandler(environment));
