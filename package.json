@@ -16,6 +16,7 @@
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
     "express-validator": "^5.0.0",
+    "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.5",
     "promises-retry": "^3.0.4",
     "request": "^2.83.0",
