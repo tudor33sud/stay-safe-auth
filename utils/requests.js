@@ -11,7 +11,7 @@ const _ = require('lodash');
 const ApiError = require('../error/api-error');
 const logger = require('./log.js').logger;
 const appConfig = require('../config');
-
+const jwtHelper = require('../utils/jwt-helper');
 
 /**
  * Default resolving for errors and sending appropriate message with the response
@@ -67,16 +67,28 @@ function productionErrorHandler(err, req, res, next) {
     resolveError(err, req, res, { log: true, req })
 }
 
+function injectReferrer() {
+    return (req, res, next) => {
+        try {
+            req.referrer = {
+                id: jwtHelper.getReferrer(req),
+                jwt: jwtHelper.getJWT(req)
+            };
+            next();
+        } catch (err) {
+            next(new ApiError(`Cannot check referrer`, 403));
+        }
+    };
+}
+
 function customHeaders() {
     return (req, res, next) => {
         try {
             req.customHeaders = {
-                [appConfig.tracingHeaderKey]: req.id
+                [appConfig.tracingHeaderKey]: req.id,
+                [appConfig.jwtHeaderKey]: req.referrer.jwt
             }
-            //need to check if kauth.grant exists in order to pass JWT
-            if (typeof req.kauth.grant.access_token.token !== 'undefined') {
-                req.customHeaders[appConfig.jwtHeaderKey] = req.kauth.grant.access_token.token;
-            }
+
             next();
         } catch (err) {
             next(err);
@@ -89,6 +101,7 @@ module.exports = {
     middleware: {
         cors,
         defaultErrorHandler,
-        customHeaders
+        customHeaders,
+        injectReferrer
     }
 }
