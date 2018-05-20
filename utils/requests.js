@@ -86,9 +86,7 @@ function customHeaders() {
         try {
             req.customHeaders = {
                 [appConfig.tracingHeaderKey]: req.id,
-                [appConfig.jwtHeaderKey]: req.referrer.jwt
             }
-
             next();
         } catch (err) {
             next(err);

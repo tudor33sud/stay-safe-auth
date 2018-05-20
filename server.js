@@ -17,7 +17,7 @@ app.use(reqUtils.middleware.cors());
 //append request id for tracing
 app.use(tracing(appConfig.tracingHeaderKey));
 
-app.use(reqUtils.middleware.injectReferrer());
+//app.use(reqUtils.middleware.injectReferrer());
 
 app.use(reqUtils.middleware.customHeaders());
 
